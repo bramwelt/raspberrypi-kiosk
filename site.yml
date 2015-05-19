@@ -1,0 +1,31 @@
+---
+- hosts: pi.osuosl.bak
+  sudo: yes
+  tasks:
+  - name: install vim
+    apt:
+      name: vim
+      state: present
+  - name: install x11-xserver-utils
+    apt:
+      name: x11-xserver-utils
+      state: present
+  - name: copy inittab
+    copy:
+      src: files/inittab
+      dest: /etc/inittab
+  - name: copy boottomidori files
+    copy:
+      src: files/boottomidori
+      dest: /home/pi/
+      owner: pi
+      group: pi
+    notify:
+      - restart midori
+  - name: copy profile script
+    copy:
+      src: files/boottomidori.sh
+      dest: /etc/profile.d/boottomidori.sh
+  handlers:
+    - name: restart midori
+      shell: killall -s SIGHUP midori
